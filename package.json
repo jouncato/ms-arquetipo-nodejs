@@ -1,7 +1,7 @@
 {
   "name": "microservice-archetype",
   "version": "1.0.0",
-  "description": "Arquetipo base para microservicios Node.js con arquitectura hexagonal",
+  "description": "Enterprise microservice template with hexagonal architecture",
   "type": "module",
   "main": "src/main.js",
   "engines": {
@@ -11,15 +11,30 @@
     "start": "node src/main.js",
     "dev": "node --watch src/main.js",
     "test": "node --test tests/**/*.test.js",
+    "test:unit": "node --test tests/unit/**/*.test.js",
+    "test:integration": "node --test tests/integration/**/*.test.js",
     "test:watch": "node --test --watch tests/**/*.test.js",
     "test:coverage": "node --test --experimental-test-coverage tests/**/*.test.js",
-    "lint": "eslint src tests",
-    "lint:fix": "eslint src tests --fix",
+    "lint": "eslint src tests scripts",
+    "lint:fix": "eslint src tests scripts --fix",
+    "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\" \"scripts/**/*.js\"",
+    "format:check": "prettier --check \"src/**/*.js\" \"tests/**/*.js\" \"scripts/**/*.js\"",
     "docker:build": "docker build -t microservice-archetype .",
-    "docker:run": "docker-compose up -d",
-    "docker:stop": "docker-compose down",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f microservice",
     "db:migrate": "node scripts/migrate.js",
-    "generate:service": "node scripts/generate-service.js"
+    "db:seed": "node scripts/seed.js",
+    "generate:service": "node scripts/generate-service.js",
+    "clean": "rm -rf node_modules coverage .nyc_output",
+    "prepare": "husky install",
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "fastify": "^4.25.2",
@@ -28,22 +43,32 @@
     "@fastify/cors": "^8.4.2",
     "@fastify/helmet": "^11.1.1",
     "@fastify/rate-limit": "^9.1.0",
+    "@fastify/swagger": "^8.13.0",
+    "@fastify/swagger-ui": "^2.1.0",
+    "@fastify/jwt": "^7.2.4",
+    "bcryptjs": "^2.4.3",
     "pino": "^8.17.2",
     "pino-pretty": "^10.3.1",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
-    "@eslint/js": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.1.1"
+    "prettier": "^3.1.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "supertest": "^6.3.4"
   },
   "keywords": [
     "microservice",
     "node.js",
     "fastify",
     "hexagonal-architecture",
-    "archetype"
+    "archetype",
+    "enterprise"
   ],
   "author": "Backend Team",
   "license": "MIT"

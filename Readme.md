@@ -1,338 +1,313 @@
-# Microservice Archetype - Node.js 22
+# Node.js Microservice Archetype
 
-Arquetipo base para microservicios backend con **arquitectura hexagonal**, Node.js 22, Fastify y PostgreSQL.
+Enterprise-grade microservice template implementing hexagonal architecture with Node.js 22, Fastify, and PostgreSQL.
 
-## 🚀 Características
+## Project Description
 
-- **Node.js 22** con ESM (ECMAScript Modules)
-- **Arquitectura Hexagonal** (Puertos y Adaptadores)
-- **Fastify** para alto rendimiento
-- **PostgreSQL** con pool de conexiones
-- **Logging** estructurado con Pino
-- **Pruebas** con Node.js Test Runner nativo
-- **Docker** y Docker Compose listos
-- **Validación** automática de schemas
-- **Rate limiting** y seguridad básica
+This archetype provides a production-ready foundation for building scalable microservices using modern Node.js practices. It implements hexagonal architecture (Ports and Adapters pattern) to ensure proper separation of concerns, testability, and maintainability.
 
-## 📁 Estructura del Proyecto
+## Architecture Overview
+
+The project follows Domain-Driven Design principles with clear boundaries between layers:
+
+- **Domain Layer**: Core business logic, entities, and repository interfaces
+- **Application Layer**: Use cases and application services
+- **Infrastructure Layer**: External adapters (database, messaging, etc.)
+- **Interface Layer**: API controllers and external interfaces
+
+## Project Structure
 
 ```
 microservice-archetype/
 ├── src/
-│   ├── domain/                 # Entidades y reglas de negocio
-│   │   ├── entities/           # User.entity.js
-│   │   └── repositories/       # Interfaces de repositorios
-│   ├── application/            # Casos de uso y servicios
-│   │   └── services/           # UserService.js
-│   ├── infrastructure/         # Adaptadores externos
-│   │   ├── config/             # Configuración de entornos
-│   │   ├── database/           # Conexión a PostgreSQL
-│   │   ├── logging/            # Configuración de Pino
-│   │   ├── repositories/       # Implementaciones de repositorios
-│   │   └── server/             # Configuración de Fastify
-│   ├── interfaces/             # Controladores web
-│   │   └── controllers/        # User.controller.js
-│   └── main.js                 # Punto de entrada
-├── tests/                      # Pruebas unitarias e integración
-├── scripts/                    # Scripts de utilidad
-├── docker-compose.yml          # Orquestación de servicios
-├── Dockerfile                  # Imagen Docker
-└── README.md                   # Esta documentación
+│   ├── domain/                     # Business logic and rules
+│   │   ├── entities/               # Domain entities
+│   │   ├── repositories/           # Repository interfaces
+│   │   └── services/               # Domain services
+│   ├── application/                # Application layer
+│   │   ├── services/               # Application services
+│   │   └── usecases/               # Use case implementations
+│   ├── infrastructure/             # External adapters
+│   │   ├── config/                 # Environment configuration
+│   │   ├── database/               # Database connections
+│   │   ├── logging/                # Logging configuration
+│   │   ├── repositories/           # Repository implementations
+│   │   ├── middleware/             # Express/Fastify middleware
+│   │   └── server/                 # Server setup and routes
+│   ├── interfaces/                 # External interfaces
+│   │   └── controllers/            # HTTP controllers
+│   └── main.js                     # Application entry point
+├── tests/                          # Test suites
+│   ├── unit/                       # Unit tests
+│   ├── integration/                # Integration tests
+│   └── fixtures/                   # Test fixtures
+├── scripts/                        # Utility scripts
+├── docs/                           # Documentation
+├── .env.example                    # Environment variables template
+├── .eslintrc.js                    # ESLint configuration
+├── .prettierrc                     # Prettier configuration
+├── docker-compose.yml              # Development environment
+├── Dockerfile                      # Production container
+└── package.json                    # Dependencies and scripts
 ```
 
-## 🛠️ Instalación y Configuración
+## Quick Start
 
-### Prerrequisitos
+### Prerequisites
 
-- Node.js 22+
-- Docker y Docker Compose (opcional)
-- PostgreSQL (si no usas Docker)
+- Node.js 22.x or higher
+- Docker and Docker Compose (recommended)
+- PostgreSQL 15+ (if not using Docker)
 
-### 1. Clonar y configurar
+### Installation
 
+1. Clone the repository:
 ```bash
-# Clonar el arquetipo
-git clone <repo-url> mi-microservicio
-cd mi-microservicio
+git clone <repository-url> your-microservice
+cd your-microservice
+```
 
-# Instalar dependencias
+2. Install dependencies:
+```bash
 npm install
-
-# Copiar y configurar variables de entorno
-cp .env.example .env
 ```
 
-### 2. Configurar variables de entorno
-
-Edita `.env` con tus valores:
-
+3. Configure environment variables:
 ```bash
-# Servidor
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+4. Start with Docker (recommended):
+```bash
+npm run docker:up
+```
+
+Or start manually:
+```bash
+# Start PostgreSQL locally first
+npm run dev
+```
+
+The service will be available at `http://localhost:3000`
+
+## Environment Configuration
+
+Copy `.env.example` to `.env` and configure the following variables:
+
+### Server Configuration
+```bash
 NODE_ENV=development
 PORT=3000
 HOST=127.0.0.1
+```
 
-# Base de datos
+### Database Configuration
+```bash
 DATABASE_ENABLED=true
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=microservice_db
 DB_USER=postgres
-DB_PASSWORD=postgres123
+DB_PASSWORD=your_secure_password
+DB_SSL=false
+DB_POOL_MIN=2
+DB_POOL_MAX=10
+```
 
-# Logging
+### Security Configuration
+```bash
+JWT_SECRET=your_jwt_secret_key
+CORS_ORIGINS=http://localhost:3000
+RATE_LIMIT_MAX=100
+RATE_LIMIT_WINDOW=1 minute
+```
+
+### Logging Configuration
+```bash
 LOG_LEVEL=debug
-
-# Seguridad
-JWT_SECRET=your-secret-key
-CORS_ORIGINS=http://localhost:3000,http://localhost:3001
 ```
 
-### 3. Iniciar con Docker (Recomendado)
+## Available Scripts
 
 ```bash
-# Iniciar todos los servicios
-npm run docker:run
+# Development
+npm run dev              # Start development server with hot reload
+npm start               # Start production server
 
-# Ver logs
-docker-compose logs -f microservice
+# Testing
+npm test                # Run all tests
+npm run test:unit       # Run unit tests only
+npm run test:integration # Run integration tests only
+npm run test:watch      # Run tests in watch mode
+npm run test:coverage   # Generate coverage report
 
-# Parar servicios
-npm run docker:stop
+# Code Quality
+npm run lint            # Run ESLint
+npm run lint:fix        # Fix ESLint issues
+npm run format          # Format code with Prettier
+npm run type-check      # Run TypeScript type checking
+
+# Docker
+npm run docker:build    # Build Docker image
+npm run docker:up       # Start with Docker Compose
+npm run docker:down     # Stop Docker containers
+
+# Database
+npm run db:migrate      # Run database migrations
+npm run db:seed         # Seed database with test data
+
+# Utilities
+npm run generate:service # Generate new service boilerplate
+npm run clean           # Clean build artifacts
 ```
 
-### 4. Iniciar manualmente
+## Testing Strategy
 
+The project includes comprehensive testing setup:
+
+### Unit Tests
+Located in `tests/unit/`, these test individual components in isolation using mocks for dependencies.
+
+### Integration Tests
+Located in `tests/integration/`, these test complete workflows with real database connections.
+
+### Running Tests
 ```bash
-# Con base de datos local
-npm run dev
-
-# Sin base de datos (solo para pruebas)
-DATABASE_ENABLED=false npm run dev
-```
-
-## 🧪 Pruebas
-
-```bash
-# Ejecutar todas las pruebas
+# Run all tests
 npm test
 
-# Pruebas en modo watch
-npm run test:watch
-
-# Cobertura de código
+# Run with coverage
 npm run test:coverage
+
+# Run specific test file
+npm test -- tests/unit/services/user.service.test.js
+
+# Watch mode for development
+npm run test:watch
 ```
 
-## 📊 API Endpoints
+## Development Standards
 
-### Health Check
-```http
-GET /health
-```
+### Code Style
+- ESLint with Airbnb configuration
+- Prettier for code formatting
+- Conventional Commits for commit messages
+- Husky pre-commit hooks
 
-### Usuarios
-```http
-GET    /api/v1/users          # Listar usuarios
-GET    /api/v1/users/:id      # Obtener usuario
-POST   /api/v1/users          # Crear usuario
-PUT    /api/v1/users/:id      # Actualizar usuario
-DELETE /api/v1/users/:id      # Eliminar usuario
-```
+### Architecture Principles
+- Follow SOLID principles
+- Implement dependency injection
+- Use interface segregation
+- Maintain clear separation of concerns
+- Write comprehensive tests
 
-### Documentación API
-Visita `http://localhost:3000/docs` para ver la documentación Swagger automática.
+### Error Handling
+- Centralized error handling middleware
+- Structured logging with correlation IDs
+- Proper HTTP status codes
+- Detailed error messages for development
 
-## 🔧 Desarrollo
+### API Design
+- RESTful API conventions
+- OpenAPI/Swagger documentation
+- Request/response validation
+- Consistent error response format
 
-### Agregar nueva entidad
+## Key Dependencies
 
-1. **Crear entidad de dominio**:
-```javascript
-// src/domain/entities/product.entity.js
-export class Product {
-  constructor({ id, name, price }) {
-    this.id = id;
-    this.name = name;
-    this.price = price;
-  }
-}
-```
+### Core Framework
+- **Fastify**: High-performance web framework
+- **@fastify/postgres**: PostgreSQL connection plugin
+- **pino**: Structured logging
 
-2. **Crear repositorio (interfaz)**:
-```javascript
-// src/domain/repositories/product.repository.js
-export class ProductRepository {
-  async create(product) { throw new Error('Method must be implemented'); }
-  async findById(id) { throw new Error('Method must be implemented'); }
-}
-```
+### Development
+- **ESLint**: Code linting
+- **Prettier**: Code formatting
+- **Husky**: Git hooks
+- **lint-staged**: Pre-commit file processing
 
-3. **Implementar repositorio**:
-```javascript
-// src/infrastructure/repositories/product.repository.postgres.js
-export class PostgresProductRepository extends ProductRepository {
-  // Implementar métodos...
-}
-```
+### Testing
+- **Node.js Test Runner**: Native testing framework
+- **Supertest**: HTTP assertion library
 
-4. **Crear servicio**:
-```javascript
-// src/application/services/product.service.js
-export class ProductService {
-  constructor(productRepository) {
-    this.productRepository = productRepository;
-  }
-}
-```
+### Production
+- **Helmet**: Security headers
+- **CORS**: Cross-origin resource sharing
+- **Rate Limiting**: Request rate limiting
 
-5. **Crear controlador**:
-```javascript
-// src/interfaces/controllers/product.controller.js
-export async function productRoutes(fastify, options) {
-  // Definir rutas...
-}
-```
+## Security Considerations
 
-6. **Registrar rutas** en `src/infrastructure/server/routes.js`
+### Authentication & Authorization
+- JWT token validation middleware
+- Role-based access control ready
+- Secure session management
 
-### Scripts de utilidad
+### Input Validation
+- Schema-based request validation
+- SQL injection prevention
+- XSS protection through proper encoding
 
+### Infrastructure Security
+- Docker security best practices
+- Non-root container user
+- Environment variable protection
+- HTTPS enforcement in production
+
+## Production Deployment
+
+### Container Deployment
 ```bash
-# Generar nuevo servicio automáticamente
-npm run generate:service -- --name=Product
+# Build production image
+docker build -t your-microservice:latest .
 
-# Ejecutar migraciones
-npm run db:migrate
-
-# Linting
-npm run lint
-npm run lint:fix
+# Run container
+docker run -d \
+  --name your-microservice \
+  -p 3000:3000 \
+  --env-file .env.production \
+  your-microservice:latest
 ```
 
-## 🐳 Docker
-
-### Builds personalizados
-
-```bash
-# Build de imagen
-npm run docker:build
-
-# Run con configuración personalizada
-docker run -p 3000:3000 \
-  -e DATABASE_ENABLED=false \
-  microservice-archetype
-```
-
-### Usar como base para otros servicios
-
-```dockerfile
-FROM microservice-archetype:latest
-COPY ./my-service /app/
-```
-
-## 📈 Monitoreo y Observabilidad
-
-### Logs estructurados
-```javascript
-// Los logs se formatean automáticamente
-request.log.info({ userId: 123 }, 'User created');
-```
-
-### Métricas
-El endpoint `/health` proporciona:
-- Status del servicio
-- Uptime
-- Timestamp
-- Versión
-
-### Request ID
-Cada request tiene un ID único traceable en headers y logs.
-
-## 🔒 Seguridad
-
-- **Helmet** para headers de seguridad
-- **CORS** configurable
-- **Rate limiting** por IP
-- **Validación** estricta de input
-- **Sanitización** automática de datos
-
-## 🚢 Deployment
-
-### Variables de entorno para producción
-
+### Environment Variables for Production
 ```bash
 NODE_ENV=production
 LOG_LEVEL=info
 DATABASE_ENABLED=true
 DB_SSL=true
-JWT_SECRET=strong-random-key
+JWT_SECRET=strong_random_production_key
 RATE_LIMIT_ENABLED=true
 ```
 
-### Kubernetes (ejemplo)
+### Health Monitoring
+- Health check endpoint at `/health`
+- Structured logging for monitoring
+- Request correlation IDs
+- Performance metrics collection ready
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: microservice
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: microservice
-  template:
-    metadata:
-      labels:
-        app: microservice
-    spec:
-      containers:
-      - name: microservice
-        image: microservice-archetype:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: NODE_ENV
-          value: "production"
-```
+## Extending the Archetype
 
-## 🔄 Generación de nuevos microservicios
+### Adding New Entities
+1. Create domain entity in `src/domain/entities/`
+2. Define repository interface in `src/domain/repositories/`
+3. Implement repository in `src/infrastructure/repositories/`
+4. Create application service in `src/application/services/`
+5. Add controller in `src/interfaces/controllers/`
+6. Register routes in `src/infrastructure/server/routes.js`
 
-```bash
-# Copiar arquetipo
-cp -r microservice-archetype nuevo-servicio
-cd nuevo-servicio
+### Database Migrations
+Database schema changes should be managed through migration scripts in `scripts/migrations/`.
 
-# Personalizar
-sed -i 's/microservice-archetype/nuevo-servicio/g' package.json
-sed -i 's/microservice_db/nuevo_servicio_db/g' .env
+### Configuration Management
+Environment-specific configurations are managed through the config system in `src/infrastructure/config/`.
 
-# Instalar y arrancar
-npm install
-npm run docker:run
-```
+## License
 
-## 📝 Convenciones de código
+MIT License - see LICENSE file for details.
 
-- **ESM** para todos los imports/exports
-- **PascalCase** para clases y constructores
-- **camelCase** para variables y funciones
-- **kebab-case** para archivos y carpetas
-- **UPPER_CASE** para constantes globales
+## Contributing
 
-## 🤝 Contribución
-
-1. Fork del proyecto
-2. Crear feature branch: `git checkout -b feature/amazing-feature`
-3. Commit cambios: `git commit -m 'Add amazing feature'`
-4. Push branch: `git push origin feature/amazing-feature`
-5. Abrir Pull Request
-
-## 📄 Licencia
-
-MIT License - ver archivo `LICENSE` para detalles.
-
----
-
-**¿Problemas o preguntas?** Abre un issue en el repositorio.
+1. Follow the established coding standards
+2. Write comprehensive tests for new features
+3. Update documentation as needed
+4. Submit pull requests with clear descriptions
