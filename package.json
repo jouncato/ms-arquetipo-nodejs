@@ -1,0 +1,50 @@
+{
+  "name": "microservice-archetype",
+  "version": "1.0.0",
+  "description": "Arquetipo base para microservicios Node.js con arquitectura hexagonal",
+  "type": "module",
+  "main": "src/main.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "start": "node src/main.js",
+    "dev": "node --watch src/main.js",
+    "test": "node --test tests/**/*.test.js",
+    "test:watch": "node --test --watch tests/**/*.test.js",
+    "test:coverage": "node --test --experimental-test-coverage tests/**/*.test.js",
+    "lint": "eslint src tests",
+    "lint:fix": "eslint src tests --fix",
+    "docker:build": "docker build -t microservice-archetype .",
+    "docker:run": "docker-compose up -d",
+    "docker:stop": "docker-compose down",
+    "db:migrate": "node scripts/migrate.js",
+    "generate:service": "node scripts/generate-service.js"
+  },
+  "dependencies": {
+    "fastify": "^4.25.2",
+    "@fastify/env": "^4.2.0",
+    "@fastify/postgres": "^5.2.2",
+    "@fastify/cors": "^8.4.2",
+    "@fastify/helmet": "^11.1.1",
+    "@fastify/rate-limit": "^9.1.0",
+    "pino": "^8.17.2",
+    "pino-pretty": "^10.3.1",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "@eslint/js": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.1.1"
+  },
+  "keywords": [
+    "microservice",
+    "node.js",
+    "fastify",
+    "hexagonal-architecture",
+    "archetype"
+  ],
+  "author": "Backend Team",
+  "license": "MIT"
+}
